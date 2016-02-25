@@ -39,38 +39,56 @@ atOffsetFromCenter:(CGPoint)offset
                      completion:nil];
 }
 
+- (void)zoomView:(UIView *)view
+         forScale:(float)scale
+          duration:(NSTimeInterval)duration
+atOffsetFromCenter:(CGPoint)offset
+     swipeableView:(ZLSwipeableView *)swipeableView {
+    [UIView animateWithDuration:duration
+                          delay:0
+                        options:UIViewAnimationOptionAllowUserInteraction
+                     animations:^{
+                         view.center = [swipeableView convertPoint:swipeableView.center
+                                                          fromView:swipeableView.superview];
+                         CGAffineTransform transform = CGAffineTransformMakeScale(scale, scale);
+                         transform = CGAffineTransformTranslate(transform, offset.x, offset.y);
+                         view.transform = transform;
+                     }
+                     completion:nil];
+}
+
 - (void)animateView:(UIView *)view
               index:(NSUInteger)index
               views:(NSArray<UIView *> *)views
       swipeableView:(ZLSwipeableView *)swipeableView {
-    CGFloat degree = 1;
+    CGFloat scale = powf(0.96, (CGFloat)(index));
     NSTimeInterval duration = 0.4;
-    CGPoint offset = CGPointMake(0, CGRectGetHeight(swipeableView.bounds) * 0.3);
+    CGPoint offset = CGPointMake(0, (view.bounds.size.height*(1.0-scale))/2.0 + 8.0*(CGFloat)index); // real offset is 5.0
     switch (index) {
     case 0:
-        [self rotateView:view
-                     forDegree:0
+            [self zoomView:view
+                     forScale:scale
                       duration:duration
             atOffsetFromCenter:offset
                  swipeableView:swipeableView];
         break;
     case 1:
-        [self rotateView:view
-                     forDegree:degree
+        [self zoomView:view
+                     forScale:scale
                       duration:duration
             atOffsetFromCenter:offset
                  swipeableView:swipeableView];
         break;
     case 2:
-        [self rotateView:view
-                     forDegree:-degree
+        [self zoomView:view
+                     forScale:scale
                       duration:duration
             atOffsetFromCenter:offset
                  swipeableView:swipeableView];
         break;
     case 3:
-        [self rotateView:view
-                     forDegree:0
+        [self zoomView:view
+                     forScale:scale
                       duration:duration
             atOffsetFromCenter:offset
                  swipeableView:swipeableView];
@@ -79,5 +97,6 @@ atOffsetFromCenter:(CGPoint)offset
         break;
     }
 }
+
 
 @end
