@@ -47,7 +47,9 @@ static const CGFloat kAnchorViewWidth = 1000;
         self.swipeableView = swipeableView;
 
         [view addGestureRecognizer:
-                  [[PanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)]];
+          [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handlePan:)]];
+        [view addGestureRecognizer:
+          [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTap:)]];
         _anchorView =
             [[UIView alloc] initWithFrame:CGRectMake(0, 0, kAnchorViewWidth, kAnchorViewWidth)];
         _anchorView.hidden = NO;
@@ -124,6 +126,14 @@ static const CGFloat kAnchorViewWidth = 1000;
 
         [self didEndSwipingView:_view movement:movement];
     }
+}
+
+- (void)handleTap:(UITapGestureRecognizer *)recognizer {
+    if (!_swipeableView) {
+        return;
+    }
+
+    [self didTapView:_view];
 }
 
 - (void)setStateSnapping:(CGPoint)point {
@@ -288,6 +298,15 @@ static const CGFloat kAnchorViewWidth = 1000;
         [self.swipeableView.delegate swipeableView:self.swipeableView
                                  didEndSwipingView:view
                                         atLocation:movement.location];
+    }
+}
+
+- (void)didTapView:(UIView *)view
+{
+    if ([self.swipeableView.delegate
+         respondsToSelector:@selector(swipeableView:didTapView:)]) {
+        [self.swipeableView.delegate swipeableView:self.swipeableView
+                                        didTapView:view];
     }
 }
 
