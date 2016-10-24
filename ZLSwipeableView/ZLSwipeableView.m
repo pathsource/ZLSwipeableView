@@ -216,6 +216,15 @@
                                                         animator:self.animator
                                                    swipeableView:self];
     [self setManagerForView:view viewManager:viewManager];
+
+    if (self.stopSwiping) {
+      NSArray* gesuresR = view.gestureRecognizers;
+      [gesuresR enumerateObjectsUsingBlock:^(__kindof UIGestureRecognizer * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([obj isKindOfClass:UIPanGestureRecognizer.class]) {
+          [view removeGestureRecognizer:obj];
+        }
+      }];
+    }
 }
 
 - (void)remove:(UIView *)view {
